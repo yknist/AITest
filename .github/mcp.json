@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "bc-observatory": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "bc-observatory@latest"]
+    },
+    "bc-code-intel": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "bc-code-intelligence-mcp"]
+    },
+    "ms-learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp"
+    },
+    "azure-devops": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@azure-devops/mcp", "dynamic-difference", "--authentication", "envvar"]
+    }
+  }
+}
