@@ -1,5 +1,6 @@
 # BC-Entwicklungsablauf
-- Arbeite immer auf Branch `issue-<nr>`; falls er existiert, darauf weitermachen.
+- Die Action legt pro Lauf einen neuen Branch `claude/issue-<nr>-<zeitstempel>` an. Gibt es schon einen älteren
+  Branch `claude/issue-<nr>-*`, zuerst dessen neuesten Stand in den aktuellen Branch mergen und darauf weiterarbeiten.
 - Symbole: `bash Scripts/bc.sh symbols`
 - Kompilieren: `al compile /project:. /packagecachepath:.alpackages` – Fehler und Warnungen beheben.
   Falls die Syntax nicht passt: `al help compile` aufrufen und anpassen.
