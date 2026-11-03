@@ -53,6 +53,15 @@ jobs:
           fi
           echo "WORK_BRANCH=$(git branch --show-current)" >> "$GITHUB_ENV"
 
+      # Git-Zugriff auf Azure DevOps per PAT (ohne Token in URLs)
+      - name: Azure-DevOps-Git einrichten
+        if: env.ADO_PAT != ''
+        run: |
+          git config --global credential.https://dev.azure.com.helper \
+            '!f() { echo username=pat; echo "password=$ADO_PAT"; }; f'
+          git ls-remote https://dev.azure.com/dynamic-difference/Schulungen/_git/DiFFerence.JSChart HEAD >/dev/null \
+            && echo "ADO-Zugriff ok" || echo "::warning::ADO-Zugriff fehlgeschlagen – PAT prüfen"
+
       - uses: actions/setup-dotnet@v4
         with: { dotnet-version: '8.0.x' }
       - name: AL-Compiler installieren

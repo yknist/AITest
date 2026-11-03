@@ -4,6 +4,26 @@
 - Der Arbeits-Branch (`issue-<nr>` bzw. der PR-Branch) ist vom Workflow bereits ausgecheckt.
   Keine neuen Branches anlegen, nach jedem Arbeitsschritt committen und `git push -u origin HEAD`.
 
+## Wo liegt der Code? (wichtig)
+- Dieses GitHub-Repo (AITest) ist nur das **Steuer-Repo**: Issues, Workflow, Skripte, Konzepte.
+- Der AL-Code liegt in **Azure DevOps**, Organisation `dynamic-difference`. Nennt das Issue ein Repo
+  (z. B. `Schulungen/_git/DiFFerence.JSChart` oder eine dev.azure.com-URL), wird **dort** entwickelt – nicht nachfragen.
+  Nur wenn ausdrücklich „in AITest“ steht, wird hier entwickelt. Ist kein Repo genannt, im Issue nachfragen.
+- Git-Zugriff auf Azure DevOps ist vorkonfiguriert (PAT mit Code Read & Write) – einfach klonen:
+  `git clone https://dev.azure.com/dynamic-difference/<Projekt>/_git/<Repo> repos/<Repo>`
+- In jedem ADO-Repo: Branch `issue-<nr>` vom Default-Branch anlegen bzw. auf dem bestehenden weiterarbeiten,
+  committen und `git push -u origin issue-<nr>`.
+- Liegt im ADO-Repo eine `CLAUDE.md` oder `KUNDE.md`, zuerst lesen und befolgen (Kunden-/Repo-Besonderheiten).
+- Mehrere Repos betroffen: alle nach `repos/` klonen, in Abhängigkeitsreihenfolge (laut `app.json`) bauen und deployen.
+  Symbole/Kompilieren/Deploy jeweils im App-Ordner ausführen: `cd repos/<Repo>/<App-Ordner> && bash $GITHUB_WORKSPACE/Scripts/bc.sh symbols`.
+- Im AITest-Branch nur Konzepte (`docs/konzepte/`) committen, keinen Kundencode. `repos/` nie committen.
+- PR bei „ok“: in **jedem** geänderten ADO-Repo per `azure-devops`-MCP einen PR `issue-<nr>` → Default-Branch anlegen,
+  Link zum GitHub-Issue in die Beschreibung, PR-Links im GitHub-Issue posten.
+
+## Modi
+- Steht im Issue „konzeptionieren“/„Konzept“: Modus Konzeption (unten). Sonst direkt entwickeln – nicht fragen,
+  ob vorher ein Konzept gewünscht ist.
+
 ## Werkzeuge (MCP)
 - `bc-code-intel`: AL-Best-Practices, Patterns, Code-Review – vor größeren Änderungen konsultieren.
 - `bc-observatory` und `ms-learn`: BC-Doku, Objekt-/Event-Namen, Release-Infos nachschlagen statt raten.
