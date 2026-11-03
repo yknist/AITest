@@ -24,7 +24,10 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with: { dotnet-version: '8.0.x' }
       - name: AL-Compiler installieren
-        run: dotnet tool install --global Microsoft.Dynamics.BusinessCentral.Development.Tools.Linux --prerelease
+        run: |
+          dotnet tool install --global Microsoft.Dynamics.BusinessCentral.Development.Tools --prerelease
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+          "$HOME/.dotnet/tools/al" version
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
