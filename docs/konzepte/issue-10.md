@@ -70,12 +70,12 @@ Test-App `test/` (Abhängigkeiten: Haupt-App, Library Assert, Any, Library Varia
 5. Alle Enum-Werte (A/B/C) werden korrekt gespeichert.
 Reine UI-Erweiterungen (Pages) ohne Logik: keine Tests. Ausführung per `al runtests`, sonst manuell über „AL-Testtool“.
 
-## 7. Offene Fragen
-1. Soll das Feld im Verkaufsauftrag **editierbar** sein oder nur angezeigt werden?
-2. Soll es auch für andere Belegarten (Angebot, Rechnung, Gutschrift) und in die gebuchten Belege (Verkaufslieferung/-rechnung) übernommen werden? Konzept geht zunächst von Sales Header allgemein (alle Belegarten, da Tabelle 36) und **nicht** von gebuchten Belegen aus.
-3. Ist ein leerer Wert zulässig oder soll A/B/C Pflichtfeld sein? (Annahme: leer zulässig.)
-4. Soll Klassifizierung bei Rechnung-an-Debitor (Bill-to) abweichen können? (Annahme: nur Sell-to.)
-5. Exakter Event-Name/Signatur wird bei der Umsetzung per bc-observatory verifiziert (Annahme: `OnAfterValidateEvent` auf `Sell-to Customer No.`; Alternative `OnAfterCopySellToCustomerAddressFieldsFromCustomer`).
+## 7. Offene Fragen (beantwortet)
+1. Feld im Verkaufsauftrag: **editierbar**.
+2. Alle **ungebuchten** Belegarten (Sales Header allgemein); **keine** gebuchten Belege.
+3. Leerer Wert **zulässig**.
+4. Nur Sell-to; keine abweichende Bill-to-Klassifizierung.
+5. Event: `OnAfterValidateEvent` auf `Sell-to Customer No.` (Verifikation bei Umsetzung per bc-observatory).
 
 ## 8. Aufwandsschätzung
 **Story Points: 3**
