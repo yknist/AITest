@@ -2,11 +2,18 @@ name: Claude
 on:
   issue_comment: { types: [created] }
   issues: { types: [opened] }
-  pull_request_review_comment: { types: [created] }
+
+# Pro Issue immer nur ein Lauf gleichzeitig, weitere warten.
+concurrency:
+  group: claude-issue-${{ github.event.issue.number }}
+  cancel-in-progress: false
 
 jobs:
   claude:
-    if: contains(github.event.comment.body, '@claude') || contains(github.event.issue.body, '@claude')
+    if: >-
+      github.event.sender.type != 'Bot' &&
+      (contains(github.event.comment.body, '@claude') ||
+       (github.event_name == 'issues' && contains(github.event.issue.body, '@claude')))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -18,9 +25,34 @@ jobs:
       BC_ENVIRONMENT: ${{ secrets.BC_ENVIRONMENT }}
       BC_CLIENT_ID: ${{ secrets.BC_CLIENT_ID }}
       BC_CLIENT_SECRET: ${{ secrets.BC_CLIENT_SECRET }}
+      # Azure DevOps Personal Access Token (Code: Read & Write, Work Items: Read & Write)
+      ADO_MCP_AUTH_TOKEN: ${{ secrets.ADO_PAT }}
+      ADO_PAT: ${{ secrets.ADO_PAT }}
+      GH_TOKEN: ${{ github.token }}
+      ISSUE_NR: ${{ github.event.issue.number }}
+      IS_PR: ${{ github.event.issue.pull_request && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
+
+      # Fester Branch pro Issue: issue-<nr>. Existiert er schon, wird darauf weitergearbeitet.
+      # Bei Kommentaren in einem PR wird dessen Branch ausgecheckt.
+      - name: Arbeits-Branch vorbereiten
+        run: |
+          git config user.name  "claude[bot]"
+          git config user.email "209825114+claude[bot]@users.noreply.github.com"
+          if [ "$IS_PR" = "true" ]; then
+            gh pr checkout "$ISSUE_NR"
+          else
+            B="issue-$ISSUE_NR"
+            if git ls-remote --exit-code --heads origin "$B" >/dev/null; then
+              git checkout -B "$B" "origin/$B"
+            else
+              git checkout -b "$B"
+            fi
+          fi
+          echo "WORK_BRANCH=$(git branch --show-current)" >> "$GITHUB_ENV"
+
       - uses: actions/setup-dotnet@v4
         with: { dotnet-version: '8.0.x' }
       - name: AL-Compiler installieren
@@ -28,7 +60,19 @@ jobs:
           dotnet tool install --global Microsoft.Dynamics.BusinessCentral.Development.Tools --prerelease
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
           "$HOME/.dotnet/tools/al" --version
+
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: --allowedTools "Bash,Read,Edit,Write,Glob,Grep"
+          # Mit "prompt" läuft die Action im Agent-Modus: sie legt KEINE eigenen
+          # claude/issue-...-Branches an, Claude arbeitet auf WORK_BRANCH.
+          prompt: |
+            Du bearbeitest GitHub ${{ github.event.issue.pull_request && 'PR' || 'Issue' }} #${{ github.event.issue.number }} im Repo ${{ github.repository }}.
+            Arbeits-Branch ist bereits ausgecheckt: ${{ env.WORK_BRANCH }} (keinen anderen Branch anlegen).
+            1. Lies Issue/PR inkl. aller Kommentare: `gh issue view ${{ github.event.issue.number }} --comments`
+               Maßgeblich ist der neueste Kommentar mit @claude.
+            2. Arbeite nach CLAUDE.md.
+            3. Antworte im Issue/PR ausschließlich per `gh issue comment ${{ github.event.issue.number }} --body-file <datei>`.
+          claude_args: >-
+            --mcp-config .github/mcp.json
+            --allowedTools "Bash,Read,Edit,Write,Glob,Grep,WebFetch,mcp__bc-observatory,mcp__bc-code-intel,mcp__ms-learn,mcp__azure-devops"
