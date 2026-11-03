@@ -90,3 +90,9 @@ Reine UI-Erweiterungen (Pages) ohne Logik: keine Tests. Ausführung per `al runt
 | **Summe** | **7,5 h** |
 
 Annahmen: erfahrene:r BC-Entwickler:in ohne KI, Sandbox verfügbar, Standardverhalten laut offenen Fragen (Annahmen oben), keine Übernahme in gebuchte Belege.
+
+## 9. Umsetzung – Abweichungen vom Konzept
+- Codeunit 50402 heißt `DIF Customer Class Mgt` (Objektname max. 30 Zeichen).
+- Felder stehen hinter „Name“ (Karte, Liste) bzw. „Sell-to Customer Name“ (Auftrag).
+- Test-App ohne Abhängigkeit auf `Tests-TestLibraries` (in der Sandbox nicht veröffentlicht); Testdaten werden direkt angelegt. 5 Tests in Codeunit 50150.
+- Berechtigung: Execute auf die Codeunit; Tabellenfelder erben die Rechte der Basistabellen.
