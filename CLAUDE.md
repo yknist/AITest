@@ -16,11 +16,26 @@
   1. Ausgangslage & Ziel  2. Betroffene Objekte (Tabelle: Typ, ID, Name, neu/Erweiterung, Änderung)
   3. Ablauf als Mermaid-Diagramm (`flowchart` oder `sequenceDiagram`), Datenmodell als `erDiagram` falls Tabellen betroffen
   4. UI-Änderungen (welche Seite, welche Felder/Aktionen, wo)  5. Berechtigungen, Upgrade/Datenmigration
-  6. Offene Fragen  7. Aufwandsschätzung grob
+  6. Tests (welche Logik wird wie automatisiert getestet)  7. Offene Fragen
+  8. Aufwandsschätzung: Story Points (Fibonacci) UND Personenstunden für eine:n erfahrene:n BC-Entwickler:in
+     ohne KI, aufgeschlüsselt nach Konzeption/Entwicklung/Tests/Übersetzung/Review; Annahmen nennen
 - Committen, pushen und im Issue eine Zusammenfassung inkl. Mermaid-Diagramm posten (GitHub rendert es)
   plus Link auf die Datei im Branch. Abschließen mit: „Freigabe mit `@claude Entwicklung freigegeben`“.
 - Bei Freigabe: Konzept aus `docs/konzepte/issue-<nr>.md` umsetzen und normal weiter (Bauen und Deployen).
   Abweichungen vom Konzept im Konzept-Dokument nachtragen.
+
+## Qualitätsregeln (gelten immer)
+- Übersetzungen: `app.json` → `"features"` enthält `"TranslationFile"`. Alle Captions/Labels/ToolTips auf Englisch,
+  nach dem Kompilieren `Translations/<App>.g.xlf` nach `Translations/<App>.de-DE.xlf` synchronisieren:
+  jede trans-unit vorhanden, `target` mit deutscher Übersetzung (state="translated"), keine veralteten Units.
+  Labels mit Platzhaltern bekommen `Comment` mit Erklärung. Fehlende Übersetzungen = Aufgabe nicht fertig.
+- Automatische Tests: Jede Geschäftslogik (Codeunits, Validierungen, Event-Subscriber, Berechnungen) bekommt Tests
+  in einer eigenen Test-App unter `test/` (eigenes `app.json`, Abhängigkeit auf die Haupt-App sowie
+  `Library Assert`, `Any`, `Library Variable Storage`, `Tests-TestLibraries` von Microsoft; eigener idRange 50150–50199).
+  Given-When-Then-Struktur, `[Test]`-Prozeduren, Handler für UI. Reine UI-Erweiterungen ohne Logik brauchen keine Tests.
+  Test-App mit kompilieren und deployen; Tests mit `al runtests` ausführen, falls das scheitert,
+  im Issue melden, wie die Tests in der Sandbox (Seite „AL-Testtool“) manuell gestartet werden.
+- In der Rückmeldung im Issue immer angeben: Übersetzungen ✅/❌, Tests (Anzahl, Ergebnis).
 
 ## Bauen und Deployen
 - Symbole: `bash Scripts/bc.sh symbols`
