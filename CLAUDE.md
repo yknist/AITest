@@ -9,6 +9,19 @@
 - `bc-observatory` und `ms-learn`: BC-Doku, Objekt-/Event-Namen, Release-Infos nachschlagen statt raten.
 - `azure-devops`: Work Items und Repos in Azure DevOps (Org `dynamic-difference`).
 
+## Modus: Konzeption (Schlüsselwort „konzeptionieren“ / „Konzept“)
+- NICHT programmieren, nichts deployen.
+- Analysiere die Anforderung (bestehenden Code, BC-Standard per MCP nachschlagen) und schreibe das Konzept nach
+  `docs/konzepte/issue-<nr>.md`, Gliederung:
+  1. Ausgangslage & Ziel  2. Betroffene Objekte (Tabelle: Typ, ID, Name, neu/Erweiterung, Änderung)
+  3. Ablauf als Mermaid-Diagramm (`flowchart` oder `sequenceDiagram`), Datenmodell als `erDiagram` falls Tabellen betroffen
+  4. UI-Änderungen (welche Seite, welche Felder/Aktionen, wo)  5. Berechtigungen, Upgrade/Datenmigration
+  6. Offene Fragen  7. Aufwandsschätzung grob
+- Committen, pushen und im Issue eine Zusammenfassung inkl. Mermaid-Diagramm posten (GitHub rendert es)
+  plus Link auf die Datei im Branch. Abschließen mit: „Freigabe mit `@claude Entwicklung freigegeben`“.
+- Bei Freigabe: Konzept aus `docs/konzepte/issue-<nr>.md` umsetzen und normal weiter (Bauen und Deployen).
+  Abweichungen vom Konzept im Konzept-Dokument nachtragen.
+
 ## Bauen und Deployen
 - Symbole: `bash Scripts/bc.sh symbols`
 - Kompilieren: `al compile /project:. /packagecachepath:.alpackages` – Fehler und Warnungen beheben.
